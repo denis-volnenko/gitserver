@@ -16,6 +16,9 @@ public final class RepositoryS3 extends DfsRepository {
     private final S3RefDatabase refDatabase = new S3RefDatabase(this);
 
     @NonNull
+    private String gitwebDescription = "";
+
+    @NonNull
     private MinioClient minioClient;
 
     public RepositoryS3(
@@ -31,6 +34,17 @@ public final class RepositoryS3 extends DfsRepository {
 
     public RepositoryS3(@NonNull final DfsRepositoryBuilder builder) {
         super(builder);
+    }
+
+    @NonNull
+    @Override
+    public String getGitwebDescription() {
+        return gitwebDescription;
+    }
+
+    @Override
+    public void setGitwebDescription(@NonNull final String gitwebDescription) {
+        this.gitwebDescription = gitwebDescription;
     }
 
     @Override
