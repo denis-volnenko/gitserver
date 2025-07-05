@@ -25,7 +25,7 @@ public final class GitServer {
 
     @Getter
     @Setter
-    private int port = 8080;
+    private final int port = 80;
 
     public GitServer() {
         gitServlet.setRepositoryResolver(mainResolver);
@@ -33,7 +33,7 @@ public final class GitServer {
 
     @SneakyThrows
     public void start() {
-        @NonNull final Server server = new Server(8080);
+        @NonNull final Server server = new Server(port);
         server.setHandler(handler);
         handler.addServletWithMapping(holder, "/*");
         server.start();
