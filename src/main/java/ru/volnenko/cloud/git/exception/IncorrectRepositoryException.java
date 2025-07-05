@@ -1,5 +1,5 @@
 package ru.volnenko.cloud.git.exception;
 
-public class IncorrectRepositoryException extends RuntimeException {
+public final class IncorrectRepositoryException extends RuntimeException {
 
 }
