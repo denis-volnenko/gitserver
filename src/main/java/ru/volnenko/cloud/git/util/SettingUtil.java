@@ -20,7 +20,7 @@ public final class SettingUtil {
 
     @NonNull
     public static String getS3SecretKey() {
-        final String value = System.getenv("S3_SecretKey");
+        final String value = System.getenv("S3_SECRET_KEY");
         if (value == null || value.isEmpty()) return "minio";
         return value;
     }
