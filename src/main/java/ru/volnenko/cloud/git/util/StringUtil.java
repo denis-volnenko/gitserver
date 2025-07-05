@@ -9,4 +9,14 @@ public final class StringUtil {
         return key.endsWith(suffix) ? key.substring(0, key.length() - suffix.length()) : key;
     }
 
+    public static String removePrefixIfExists(final String str, final String remove) {
+        if (str.isEmpty() || remove.isEmpty()) {
+            return str;
+        }
+        if (str.startsWith(remove)){
+            return str.substring(remove.length());
+        }
+        return str;
+    }
+
 }

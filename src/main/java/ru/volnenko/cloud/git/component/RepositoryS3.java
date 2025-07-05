@@ -26,14 +26,12 @@ public final class RepositoryS3 extends DfsRepository {
 
     public RepositoryS3(
             @NonNull final DfsRepositoryDescription desc,
-            @NonNull final DfsRepositoryBuilder builder,
             @NonNull final MinioClient minioClient,
             @NonNull final String bucketName
     ) {
-        this(builder);
+        this(new RepositoryS3Builder().setRepositoryDescription(desc));
         this.minioClient = minioClient;
         this.bucketName = bucketName;
-        builder.setRepositoryDescription(desc);
         objectDatabase = new S3ObjectDatabase(this, options, minioClient, bucketName);
     }
 
