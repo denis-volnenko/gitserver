@@ -12,6 +12,7 @@ import org.eclipse.jgit.transport.resolver.ServiceNotAuthorizedException;
 import org.eclipse.jgit.transport.resolver.ServiceNotEnabledException;
 import ru.volnenko.cloud.git.exception.IncorrectRepositoryException;
 import ru.volnenko.cloud.git.util.MinioUtil;
+import ru.volnenko.cloud.git.util.SettingUtil;
 
 public final class MainResolver implements RepositoryResolver<HttpServletRequest> {
 
@@ -19,7 +20,7 @@ public final class MainResolver implements RepositoryResolver<HttpServletRequest
     private final MinioClient minioClient = MinioUtil.getMinioClient();
 
     @NonNull
-    private final RepositoryS3Builder repositoryS3Builder = new RepositoryS3Builder();
+    private final String bucketName = SettingUtil.getS3Bucket();
 
     @Override
     public Repository open(HttpServletRequest req, String name) throws RepositoryNotFoundException, ServiceNotAuthorizedException, ServiceNotEnabledException, ServiceMayNotContinueException {
@@ -29,7 +30,9 @@ public final class MainResolver implements RepositoryResolver<HttpServletRequest
             @NonNull final DfsRepositoryDescription description = new DfsRepositoryDescription(url);
             @NonNull final String repo = parts[0];
             System.out.println(repo);
-            @NonNull final RepositoryS3 repositoryS3 = new RepositoryS3(description, repositoryS3Builder,  minioClient);
+            @NonNull final RepositoryS3 repositoryS3 = new RepositoryS3(
+                    description, RepositoryS3Builder.getInstance(),  minioClient, bucketName
+            );
             return repositoryS3;
         }
         throw new IncorrectRepositoryException();

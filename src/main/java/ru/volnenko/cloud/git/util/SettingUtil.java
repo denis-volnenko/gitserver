@@ -12,6 +12,13 @@ public final class SettingUtil {
     }
 
     @NonNull
+    public static String getS3Bucket() {
+        final String value = System.getenv("S3_BUCKET");
+        if (value == null || value.isEmpty()) return "gits3";
+        return value;
+    }
+
+    @NonNull
     public static String getS3ClientId() {
         final String value = System.getenv("S3_CLIENT_ID");
         if (value == null || value.isEmpty()) return "minio";
