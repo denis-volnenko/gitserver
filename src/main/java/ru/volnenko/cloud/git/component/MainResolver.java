@@ -1,5 +1,6 @@
 package ru.volnenko.cloud.git.component;
 
+import io.minio.MinioClient;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.NonNull;
 import org.eclipse.jgit.errors.RepositoryNotFoundException;
@@ -10,8 +11,15 @@ import org.eclipse.jgit.transport.resolver.RepositoryResolver;
 import org.eclipse.jgit.transport.resolver.ServiceNotAuthorizedException;
 import org.eclipse.jgit.transport.resolver.ServiceNotEnabledException;
 import ru.volnenko.cloud.git.exception.IncorrectRepositoryException;
+import ru.volnenko.cloud.git.util.MinioUtil;
 
 public final class MainResolver implements RepositoryResolver<HttpServletRequest> {
+
+    @NonNull
+    private final MinioClient minioClient = MinioUtil.getMinioClient();
+
+    @NonNull
+    private final RepositoryS3Builder repositoryS3Builder = new RepositoryS3Builder();
 
     @Override
     public Repository open(HttpServletRequest req, String name) throws RepositoryNotFoundException, ServiceNotAuthorizedException, ServiceNotEnabledException, ServiceMayNotContinueException {
@@ -21,7 +29,7 @@ public final class MainResolver implements RepositoryResolver<HttpServletRequest
             @NonNull final DfsRepositoryDescription description = new DfsRepositoryDescription(url);
             @NonNull final String repo = parts[0];
             System.out.println(repo);
-            @NonNull final RepositoryS3 repositoryS3 = new RepositoryS3(description);
+            @NonNull final RepositoryS3 repositoryS3 = new RepositoryS3(description, repositoryS3Builder,  minioClient);
             return repositoryS3;
         }
         throw new IncorrectRepositoryException();

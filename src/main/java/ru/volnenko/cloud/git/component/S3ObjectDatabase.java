@@ -1,5 +1,7 @@
 package ru.volnenko.cloud.git.component;
 
+import io.minio.MinioClient;
+import lombok.NonNull;
 import org.eclipse.jgit.internal.storage.dfs.*;
 import org.eclipse.jgit.internal.storage.pack.PackExt;
 
@@ -10,8 +12,16 @@ import java.util.List;
 
 public final class S3ObjectDatabase extends DfsObjDatabase {
 
-    public S3ObjectDatabase(DfsRepository repository, DfsReaderOptions options) {
+    @NonNull
+    private final MinioClient minioClient;
+
+    public S3ObjectDatabase(
+            @NonNull final DfsRepository repository,
+            @NonNull final DfsReaderOptions options,
+            @NonNull final MinioClient minioClient
+    ) {
         super(repository, options);
+        this.minioClient = minioClient;
     }
 
     @Override

@@ -1,25 +1,32 @@
 package ru.volnenko.cloud.git.component;
 
+import io.minio.MinioClient;
 import lombok.NonNull;
 import org.eclipse.jgit.internal.storage.dfs.*;
 
 public final class RepositoryS3 extends DfsRepository {
 
     @NonNull
-    private static final RepositoryS3Builder BUILDER = new RepositoryS3Builder();
-
-    @NonNull
     private final DfsReaderOptions options = new DfsReaderOptions();
 
     @NonNull
-    private final S3ObjectDatabase objectDatabase = new S3ObjectDatabase(this, options);
+    private S3ObjectDatabase objectDatabase;
 
     @NonNull
     private final S3RefDatabase refDatabase = new S3RefDatabase(this);
 
-    public RepositoryS3(@NonNull final DfsRepositoryDescription desc) {
-        super(BUILDER);
-        BUILDER.setRepositoryDescription(desc);
+    @NonNull
+    private MinioClient minioClient;
+
+    public RepositoryS3(
+            @NonNull final DfsRepositoryDescription desc,
+            @NonNull final DfsRepositoryBuilder builder,
+            @NonNull final MinioClient minioClient
+    ) {
+        this(builder);
+        this.minioClient = minioClient;
+        builder.setRepositoryDescription(desc);
+        objectDatabase = new S3ObjectDatabase(this, options, minioClient);
     }
 
     public RepositoryS3(@NonNull final DfsRepositoryBuilder builder) {
