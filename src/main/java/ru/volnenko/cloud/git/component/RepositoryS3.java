@@ -1,16 +1,21 @@
 package ru.volnenko.cloud.git.component;
 
 import lombok.NonNull;
-import org.eclipse.jgit.internal.storage.dfs.DfsObjDatabase;
-import org.eclipse.jgit.internal.storage.dfs.DfsRepository;
-import org.eclipse.jgit.internal.storage.dfs.DfsRepositoryBuilder;
-import org.eclipse.jgit.internal.storage.dfs.DfsRepositoryDescription;
-import org.eclipse.jgit.lib.RefDatabase;
+import org.eclipse.jgit.internal.storage.dfs.*;
 
 public final class RepositoryS3 extends DfsRepository {
 
     @NonNull
     private static final RepositoryS3Builder BUILDER = new RepositoryS3Builder();
+
+    @NonNull
+    private final DfsReaderOptions options = new DfsReaderOptions();
+
+    @NonNull
+    private final S3ObjectDatabase objectDatabase = new S3ObjectDatabase(this, options);
+
+    @NonNull
+    private final S3RefDatabase refDatabase = new S3RefDatabase(this);
 
     public RepositoryS3(@NonNull final DfsRepositoryDescription desc) {
         super(BUILDER);
@@ -22,13 +27,13 @@ public final class RepositoryS3 extends DfsRepository {
     }
 
     @Override
-    public DfsObjDatabase getObjectDatabase() {
-        return null;
+    public S3ObjectDatabase getObjectDatabase() {
+        return objectDatabase;
     }
 
     @Override
-    public RefDatabase getRefDatabase() {
-        return null;
+    public S3RefDatabase getRefDatabase() {
+        return refDatabase;
     }
 
 }
