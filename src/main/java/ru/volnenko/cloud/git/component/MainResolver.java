@@ -27,12 +27,13 @@ public final class MainResolver implements RepositoryResolver<HttpServletRequest
         @NonNull final String url = req.getRequestURI();
         @NonNull final String[] parts = url.split(".git/");
         if (parts.length > 1) {
-            @NonNull final DfsRepositoryDescription description = new DfsRepositoryDescription(url);
             @NonNull final String repo = parts[0];
+            @NonNull final DfsRepositoryDescription description = new DfsRepositoryDescription(repo);
             System.out.println(repo);
             @NonNull final RepositoryS3 repositoryS3 = new RepositoryS3(
                     description, RepositoryS3Builder.getInstance(),  minioClient, bucketName
             );
+            repositoryS3.getConfig().setString("http", null, "receivepack", "true");
             return repositoryS3;
         }
         throw new IncorrectRepositoryException();
