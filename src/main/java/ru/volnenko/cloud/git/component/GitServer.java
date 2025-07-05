@@ -8,8 +8,6 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jgit.http.server.GitServlet;
-import org.eclipse.jgit.internal.storage.dfs.DfsRepositoryDescription;
-import org.example.MemoryRepositoryWww;
 
 public final class GitServer {
 
@@ -22,19 +20,20 @@ public final class GitServer {
     @NonNull
     private final ServletHolder holder = new ServletHolder(gitServlet);
 
+    @NonNull
+    private final MainResolver mainResolver = new MainResolver();
+
     @Getter
     @Setter
-    private int port = 80;
+    private int port = 8080;
 
     public GitServer() {
-        gitServlet.setRepositoryResolver(( req,  name) -> {
-            throw new RuntimeException("Error!");
-        });
+        gitServlet.setRepositoryResolver(mainResolver);
     }
 
     @SneakyThrows
     public void start() {
-        Server server = new Server(8080);
+        @NonNull final Server server = new Server(8080);
         server.setHandler(handler);
         handler.addServletWithMapping(holder, "/*");
         server.start();
