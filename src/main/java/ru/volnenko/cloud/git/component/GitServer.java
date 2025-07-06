@@ -25,7 +25,7 @@ public final class GitServer {
 
     @Getter
     @Setter
-    private final int port = 80;
+    private final int port = 8080;
 
     public GitServer() {
         gitServlet.setRepositoryResolver(mainResolver);
