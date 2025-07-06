@@ -35,9 +35,9 @@ public final class MainResolver implements RepositoryResolver<HttpServletRequest
             @NonNull final String repo = removePrefixIfExists(parts[0], "/");
             @NonNull final DfsRepositoryDescription description = new DfsRepositoryDescription(repo);
             System.out.println(repo);
-            @NonNull final RepositoryS3 repositoryS3 = new RepositoryS3(description,  minioClient, bucketName);
-            repositoryS3.getConfig().setString("http", null, "receivepack", "true");
-            return repositoryS3;
+            @NonNull final S3Repository repository = new S3Repository(description,  minioClient, bucketName);
+            repository.getConfig().setString("http", null, "receivepack", "true");
+            return repository;
         }
         throw new IncorrectRepositoryException();
     }

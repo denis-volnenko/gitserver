@@ -4,7 +4,7 @@ import io.minio.MinioClient;
 import lombok.NonNull;
 import org.eclipse.jgit.internal.storage.dfs.*;
 
-public final class RepositoryS3 extends DfsRepository {
+public final class S3Repository extends DfsRepository {
 
     @NonNull
     private final DfsReaderOptions options = new DfsReaderOptions();
@@ -24,18 +24,18 @@ public final class RepositoryS3 extends DfsRepository {
     @NonNull
     private String bucketName;
 
-    public RepositoryS3(
+    public S3Repository(
             @NonNull final DfsRepositoryDescription desc,
             @NonNull final MinioClient minioClient,
             @NonNull final String bucketName
     ) {
-        this(new RepositoryS3Builder().setRepositoryDescription(desc));
+        this(new S3RepositoryBuilder().setRepositoryDescription(desc));
         this.minioClient = minioClient;
         this.bucketName = bucketName;
         objectDatabase = new S3ObjectDatabase(this, options, minioClient, bucketName);
     }
 
-    public RepositoryS3(@NonNull final DfsRepositoryBuilder builder) {
+    public S3Repository(@NonNull final DfsRepositoryBuilder builder) {
         super(builder);
     }
 
