@@ -18,6 +18,11 @@ public final class SecurityFilter implements Filter {
         @NonNull final HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
         @NonNull final HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
 
+        if (httpServletRequest.getRequestURI().equals("/")) {
+            filterChain.doFilter(servletRequest, servletResponse);
+            return;
+        }
+
         final String authHeader = httpServletRequest.getHeader("Authorization");
         final String username = SettingUtil.getSecurityUsername();
         final String password = SettingUtil.getSecurityPassword();
