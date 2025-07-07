@@ -5,6 +5,7 @@ import lombok.Cleanup;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.eclipse.jgit.internal.storage.dfs.DfsRepositoryDescription;
+import ru.volnenko.cloud.git.exception.NotImplementedException;
 import ru.volnenko.cloud.git.util.SettingUtil;
 
 import java.io.ByteArrayInputStream;
@@ -42,6 +43,12 @@ public final class RepositoryInitializer {
 
     public void init(@NonNull final DfsRepositoryDescription description) {
         init(description.getRepositoryName() + ".git");
+    }
+
+
+    @NonNull
+    public String getDescription(@NonNull final DfsRepositoryDescription description) {
+        throw new NotImplementedException();
     }
 
 }
