@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+
+  gitserver:
+    image: volnenko/gitserver:latest
+    ports:
+    - "8080:8080"
+    environment:
+      SECURITY_ENABLED: "true"
+      SECURITY_USERNAME: "admin"
+      SECURITY_PASSWORD: "admin"
+      S3_ENDPOINT: http://localhost:9000
+      S3_BUCKET: gitserver
+      S3_CLIENT_ID: minio
+      S3_PASSWORD: minio

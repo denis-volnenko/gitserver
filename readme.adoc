@@ -34,3 +34,8 @@
 
 * Support direct  pull, push and clone repositories to S3.
 
+== Docker Run
+
+----
+docker run -p 8080:8080 volnenko/gitserver:latest
+----
