@@ -17,8 +17,6 @@ import ru.volnenko.cloud.git.util.SettingUtil;
 
 public final class GitServer {
 
-    @NonNull
-    private final CacheProvider cacheProvider = new CacheProvider();
 
     @NonNull
     private final GitServlet gitServlet = new GitServlet();
@@ -37,6 +35,9 @@ public final class GitServer {
 
     @NonNull
     private final MinioClient minioClient = MinioUtil.getMinioClient();
+
+    @NonNull
+    private final CacheProvider cacheProvider = new CacheProvider(minioClient);
 
     @NonNull
     private final RepositoryInitializer repositoryInitializer = new RepositoryInitializer(minioClient, repositorySettingBuilder);

@@ -20,9 +20,6 @@ import static ru.volnenko.cloud.git.util.StringUtil.removeSuffixIfExists;
 public final class S3ObjectDatabase extends DfsObjDatabase {
 
     @NonNull
-    private static final String TYPE = "application/octet-stream";
-
-    @NonNull
     private final MinioClient minioClient;
     
     private final String bucketName = SettingUtil.getS3Bucket();
@@ -86,8 +83,7 @@ public final class S3ObjectDatabase extends DfsObjDatabase {
             final S3Pack pack = map.get(filename);
             if (pack == null || packExt == null) continue;
 
-            @NonNull final InputStream stream = minioClient.getObject(bucketName, name);
-            @NonNull final byte[] objectBytes = DataUtil.getBytes(stream);
+            @NonNull final byte[] objectBytes = cacheProvider.getBytes(bucketName, name);
             pack.put(packExt, objectBytes);
             pack.setFileSize(packExt, objectBytes.length);
         }
@@ -142,8 +138,7 @@ public final class S3ObjectDatabase extends DfsObjDatabase {
             final S3Pack pack = map.get(filename);
             if (pack == null) continue;
 
-            @NonNull @Cleanup final InputStream stream = minioClient.getObject(bucketName, name);
-            @NonNull final byte[] objectBytes = DataUtil.getBytes(stream);
+            @NonNull final byte[] objectBytes = cacheProvider.getBytes(bucketName, name);
             pack.put(packExt, objectBytes);
             pack.setFileSize(packExt, objectBytes.length);
         }
@@ -189,8 +184,7 @@ public final class S3ObjectDatabase extends DfsObjDatabase {
                 @NonNull final String filename = prefix + desc.getFileName(ext);
                 @NonNull final String repoName = memPack.getRepositoryDescription().getRepositoryName();
                 @NonNull final String objectName = repoName + ".git/" + path + filename;
-                @Cleanup @NonNull final ByteArrayInputStream inputStream = new ByteArrayInputStream(this.getData());
-                minioClient.putObject(bucketName, objectName, inputStream, TYPE);
+                cacheProvider.setBytes(bucketName, objectName, this.getData());
                 memPack.put(ext, this.getData());
             }
         };
@@ -208,8 +202,7 @@ public final class S3ObjectDatabase extends DfsObjDatabase {
             @NonNull String filename = parts[parts.length -1];
             if (filename.endsWith(".ref")) filename = removeSuffixIfExists(filename, ".ref");
             @NonNull final S3Pack memPack = new S3Pack(filename, this.getRepository().getDescription(), PackSource.INSERT);
-            @NonNull @Cleanup final InputStream stream = minioClient.getObject(bucketName, name);
-            @NonNull final byte[] objectBytes = DataUtil.getBytes(stream);
+            @NonNull final byte[] objectBytes = cacheProvider.getBytes(bucketName, name);
             memPack.put(PackExt.REFTABLE, objectBytes);
             memPack.setFileSize(PackExt.REFTABLE, objectBytes.length);
             memPack.setBlockSize(PackExt.REFTABLE, 4096);
