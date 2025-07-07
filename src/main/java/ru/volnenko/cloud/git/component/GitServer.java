@@ -1,12 +1,14 @@
 package ru.volnenko.cloud.git.component;
 
 import io.minio.MinioClient;
+import jakarta.servlet.*;
 import lombok.*;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jgit.http.server.GitServlet;
+import ru.volnenko.cloud.git.servlet.filter.IndexFilter;
 import ru.volnenko.cloud.git.servlet.filter.SecurityFilter;
 import ru.volnenko.cloud.git.servlet.system.HealthzServlet;
 import ru.volnenko.cloud.git.servlet.repository.RepositoryDataServlet;
@@ -20,6 +22,9 @@ public final class GitServer {
 
     @NonNull
     private final HealthzServlet healthzServlet = new HealthzServlet();
+
+    @NonNull
+    private final IndexFilter indexFilter = new IndexFilter();
 
     @NonNull
     private final ServletHandler handler = new ServletHandler();
@@ -52,6 +57,7 @@ public final class GitServer {
         handler.addServletWithMapping(new ServletHolder(healthzServlet), "/healthz/");
         handler.addServletWithMapping(new ServletHolder(repositoryDataServlet), "/curl/repository/*");
         if (SettingUtil.getSecurityEnabled()) handler.addFilterWithMapping(new FilterHolder(securityFilter), "/*", null);
+        handler.addFilterWithMapping(new FilterHolder(indexFilter), "/", null);
         server.start();
     }
 
