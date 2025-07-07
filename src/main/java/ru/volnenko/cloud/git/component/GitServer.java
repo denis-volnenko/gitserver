@@ -1,7 +1,6 @@
 package ru.volnenko.cloud.git.component;
 
 import io.minio.MinioClient;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.*;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.FilterHolder;
@@ -13,8 +12,6 @@ import ru.volnenko.cloud.git.servlet.system.HealthzServlet;
 import ru.volnenko.cloud.git.servlet.repository.RepositoryDataServlet;
 import ru.volnenko.cloud.git.util.MinioUtil;
 import ru.volnenko.cloud.git.util.SettingUtil;
-
-import java.io.IOException;
 
 public final class GitServer {
 
