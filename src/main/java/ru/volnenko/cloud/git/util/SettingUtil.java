@@ -4,6 +4,26 @@ import lombok.NonNull;
 
 public final class SettingUtil {
 
+    public static boolean getSecurityEnabled() {
+        final String value = System.getenv("SECURITY_ENABLED");
+        if (value == null || value.isEmpty()) return true;
+        return "true".equalsIgnoreCase(value);
+    }
+
+    @NonNull
+    public static String getSecurityUsername() {
+        final String value = System.getenv("SECURITY_USERNAME");
+        if (value == null || value.isEmpty()) return "admin";
+        return value;
+    }
+
+    @NonNull
+    public static String getSecurityPassword() {
+        final String value = System.getenv("SECURITY_PASSWORD");
+        if (value == null || value.isEmpty()) return "admin";
+        return value;
+    }
+
     @NonNull
     public static String getS3Endpoint() {
         final String value = System.getenv("S3_ENDPOINT");
