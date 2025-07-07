@@ -5,6 +5,7 @@ import lombok.Cleanup;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.eclipse.jgit.internal.storage.dfs.DfsRepositoryDescription;
+import ru.volnenko.cloud.git.builder.RepositorySettingBuilder;
 import ru.volnenko.cloud.git.exception.NotImplementedException;
 import ru.volnenko.cloud.git.util.SettingUtil;
 
@@ -18,33 +19,37 @@ public final class RepositoryInitializer {
     @NonNull
     private final MinioClient minioClient;
 
-    public RepositoryInitializer(@NonNull final MinioClient minioClient) {
+    private final RepositorySettingBuilder repositorySettingBuilder;
+
+    public RepositoryInitializer(
+            @NonNull final MinioClient minioClient,
+            @NonNull final RepositorySettingBuilder repositorySettingBuilder
+    ) {
         this.minioClient = minioClient;
+        this.repositorySettingBuilder = repositorySettingBuilder;
     }
 
     @SneakyThrows
-    public void init(@NonNull final String repoName) {
-        {
-            @Cleanup @NonNull final ByteArrayInputStream inputStream = new ByteArrayInputStream("".getBytes());
-            minioClient.putObject(SettingUtil.getS3Bucket(), repoName + "/description", inputStream, TYPE);
-        }
-        {
-            @Cleanup @NonNull final ByteArrayInputStream inputStream = new ByteArrayInputStream(
-                    ("[core]\n" +
-                            "\trepositoryformatversion = 0\n" +
-                            "\tfilemode = true\n" +
-                            "\tbare = false\n" +
-                            "\tlogallrefupdates = true\n" +
-                            "\tignorecase = true\n" +
-                            "\tprecomposeunicode = true").getBytes());
-            minioClient.putObject(SettingUtil.getS3Bucket(), repoName + "/config", inputStream, TYPE);
-        }
+    private void initDescription(@NonNull final String repositoryName) {
+        @Cleanup @NonNull final ByteArrayInputStream inputStream = new ByteArrayInputStream("".getBytes());
+        minioClient.putObject(SettingUtil.getS3Bucket(), repositoryName + "/description", inputStream, TYPE);
+    }
+
+    @SneakyThrows
+    private void initConfig(@NonNull final String repositoryName) {
+        @NonNull final String value = repositorySettingBuilder.toString();
+        @Cleanup @NonNull final ByteArrayInputStream inputStream = new ByteArrayInputStream(value.getBytes());
+        minioClient.putObject(SettingUtil.getS3Bucket(), repositoryName + "/config", inputStream, TYPE);
+    }
+
+    public void init(@NonNull final String repositoryName) {
+        initDescription(repositoryName);
+        initConfig(repositoryName);
     }
 
     public void init(@NonNull final DfsRepositoryDescription description) {
         init(description.getRepositoryName() + ".git");
     }
-
 
     @NonNull
     public String getDescription(@NonNull final DfsRepositoryDescription description) {

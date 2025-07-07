@@ -35,9 +35,8 @@ public final class MainResolver implements RepositoryResolver<HttpServletRequest
         @NonNull final String url = req.getRequestURI();
         @NonNull final String[] parts = url.split(".git/");
         if (parts.length > 1) {
-            @NonNull final String repo = removePrefixIfExists(parts[0], "/");
-            @NonNull final DfsRepositoryDescription description = new DfsRepositoryDescription(repo);
-            System.out.println(repo);
+            @NonNull final String repositoryName = removePrefixIfExists(parts[0], "/");
+            @NonNull final DfsRepositoryDescription description = new DfsRepositoryDescription(repositoryName);
             @NonNull final S3Repository repository = new S3Repository(description,  minioClient, repositoryInitializer);
             repository.getConfig().setString("http", null, "receivepack", "true");
             return repository;

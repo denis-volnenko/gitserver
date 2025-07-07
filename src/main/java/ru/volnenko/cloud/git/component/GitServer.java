@@ -7,6 +7,7 @@ import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jgit.http.server.GitServlet;
+import ru.volnenko.cloud.git.builder.RepositorySettingBuilder;
 import ru.volnenko.cloud.git.servlet.filter.IndexFilter;
 import ru.volnenko.cloud.git.servlet.filter.SecurityFilter;
 import ru.volnenko.cloud.git.servlet.system.HealthzServlet;
@@ -22,6 +23,8 @@ public final class GitServer {
     @NonNull
     private final HealthzServlet healthzServlet = new HealthzServlet();
 
+    @NonNull
+    private final RepositorySettingBuilder repositorySettingBuilder = new RepositorySettingBuilder();
 
     @NonNull
     private final IndexFilter indexFilter = new IndexFilter();
@@ -33,7 +36,7 @@ public final class GitServer {
     private final MinioClient minioClient = MinioUtil.getMinioClient();
 
     @NonNull
-    private final RepositoryInitializer repositoryInitializer = new RepositoryInitializer(minioClient);
+    private final RepositoryInitializer repositoryInitializer = new RepositoryInitializer(minioClient, repositorySettingBuilder);
 
     @NonNull
     private final SecurityFilter securityFilter = new SecurityFilter();
