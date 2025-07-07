@@ -34,8 +34,45 @@
 
 * Support direct  pull, push and clone repositories to S3.
 
+== Environment vars
+
+[cols="0,20,80"]
+!===
+|№ |Name |Description
+
+|01.
+|S3_ENDPOINT
+|S3 address.
+
+|02.
+|S3_USERNAME
+|S3 user name.
+
+|03.
+|S3_PASSWORD
+|S3 password.
+
+|04.
+|S3_BUCKET
+|S3 bucket name.
+
+|05.
+|SECURITY_ENABLED
+|Enable basic64 auth.
+
+|06.
+|SECURITY_USERNAME
+|Admin user name.
+
+|07.
+|SECURITY_PASSWORD
+|Admin password.
+
+!===
+
 == Docker Run
 
 ----
 docker run -p 8080:8080 volnenko/gitserver:latest
 ----
+
