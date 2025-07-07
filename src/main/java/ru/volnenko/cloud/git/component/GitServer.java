@@ -33,9 +33,6 @@ public final class GitServer {
     private final MinioClient minioClient = MinioUtil.getMinioClient();
 
     @NonNull
-    private final MainResolver mainResolver = new MainResolver(minioClient);
-
-    @NonNull
     private final RepositoryInitializer repositoryInitializer = new RepositoryInitializer(minioClient);
 
     @NonNull
@@ -43,6 +40,9 @@ public final class GitServer {
 
     @NonNull
     private final RepositoryDataServlet repositoryDataServlet = new RepositoryDataServlet(repositoryInitializer);
+
+    @NonNull
+    private final MainResolver mainResolver = new MainResolver(minioClient, repositoryInitializer);
 
     @Getter
     @Setter

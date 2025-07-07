@@ -10,6 +10,7 @@ import org.eclipse.jgit.internal.storage.dfs.*;
 import org.eclipse.jgit.internal.storage.pack.PackExt;
 import ru.volnenko.cloud.git.util.CryptUtil;
 import ru.volnenko.cloud.git.util.DataUtil;
+import ru.volnenko.cloud.git.util.SettingUtil;
 
 import java.io.*;
 import java.util.*;
@@ -24,18 +25,20 @@ public final class S3ObjectDatabase extends DfsObjDatabase {
     @NonNull
     private final MinioClient minioClient;
     
+    private final String bucketName = SettingUtil.getS3Bucket();
+
     @NonNull
-    private final String bucketName;
+    private final RepositoryInitializer repositoryInitializer;
 
     public S3ObjectDatabase(
             @NonNull final DfsRepository repository,
             @NonNull final DfsReaderOptions options,
             @NonNull final MinioClient minioClient,
-            @NonNull final String bucketName
+            @NonNull final RepositoryInitializer repositoryInitializer
     ) {
         super(repository, options);
         this.minioClient = minioClient;
-        this.bucketName = bucketName;
+        this.repositoryInitializer = repositoryInitializer;
     }
 
     @SneakyThrows
@@ -150,7 +153,11 @@ public final class S3ObjectDatabase extends DfsObjDatabase {
         return new S3Pack(id, this.getRepository().getDescription(), source);
     }
 
-    protected synchronized void commitPackImpl(Collection<DfsPackDescription> desc, Collection<DfsPackDescription> replace) {
+    protected synchronized void commitPackImpl(
+            final Collection<DfsPackDescription> descriptions,
+            final Collection<DfsPackDescription> replace
+    ) {
+        repositoryInitializer.init(getRepository().getDescription());
     }
 
     @SneakyThrows
