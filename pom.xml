@@ -7,6 +7,22 @@
     <artifactId>git-server</artifactId>
     <version>1.0.0</version>
 
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>volnenko</id>
+            <name>Denis volnenko</name>
+            <email>denis@volnenko.ru</email>
+        </developer>
+    </developers>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>1.8</maven.compiler.release>
