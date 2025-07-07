@@ -33,13 +33,18 @@ public final class CacheProvider {
     @SneakyThrows
     public byte[] getBytes(@NonNull final String bucketName, @NonNull final String objectName) {
         byte[] bytes = cache.getIfPresent(bucketName + "/" + objectName);
-        if (bytes != null) return bytes;
+        if (bytes != null) {
+            System.out.println("HIT:" + bucketName + "/" + objectName);
+            return bytes;
+        }
         @NonNull @Cleanup final InputStream stream = minioClient.getObject(bucketName, objectName);
-        return DataUtil.getBytes(stream);
+        final byte[] value = DataUtil.getBytes(stream);
+        System.out.println("CALL:" + bucketName + "/" + objectName);
+        return setBytes(bucketName, objectName, value);
     }
 
     @SneakyThrows
-    public void setBytes(
+    public byte[] setBytes(
             @NonNull final String bucketName,
             @NonNull final String objectName,
             @NonNull byte[] bytes
@@ -47,6 +52,7 @@ public final class CacheProvider {
         cache.put(bucketName + "/" + objectName, bytes);
         @Cleanup @NonNull final ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
         minioClient.putObject(bucketName, objectName, inputStream, TYPE);
+        return bytes;
     }
 
 }
