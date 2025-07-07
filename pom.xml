@@ -4,7 +4,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.volnenko.cloud.git</groupId>
-    <artifactId>git-server</artifactId>
+    <artifactId>gitserver</artifactId>
     <version>1.0.0</version>
 
     <licenses>
