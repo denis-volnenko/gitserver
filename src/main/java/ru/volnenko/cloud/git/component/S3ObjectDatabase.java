@@ -30,15 +30,19 @@ public final class S3ObjectDatabase extends DfsObjDatabase {
     @NonNull
     private final RepositoryInitializer repositoryInitializer;
 
+    private final CacheProvider cacheProvider;
+
     public S3ObjectDatabase(
             @NonNull final DfsRepository repository,
             @NonNull final DfsReaderOptions options,
             @NonNull final MinioClient minioClient,
-            @NonNull final RepositoryInitializer repositoryInitializer
+            @NonNull final RepositoryInitializer repositoryInitializer,
+            @NonNull final CacheProvider cacheProvider
     ) {
         super(repository, options);
         this.minioClient = minioClient;
         this.repositoryInitializer = repositoryInitializer;
+        this.cacheProvider = cacheProvider;
     }
 
     @SneakyThrows
@@ -177,7 +181,6 @@ public final class S3ObjectDatabase extends DfsObjDatabase {
         return new S3DfsOutputStream() {
             @SneakyThrows
             public void flush() {
-                @Cleanup @NonNull final ByteArrayInputStream inputStream = new ByteArrayInputStream(this.getData());
                 @NonNull String path = "";
                 if (PackExt.PACK.equals(ext)) path = "objects/pack/";
                 if (PackExt.INDEX.equals(ext)) path = "objects/pack/";
@@ -186,6 +189,7 @@ public final class S3ObjectDatabase extends DfsObjDatabase {
                 @NonNull final String filename = prefix + desc.getFileName(ext);
                 @NonNull final String repoName = memPack.getRepositoryDescription().getRepositoryName();
                 @NonNull final String objectName = repoName + ".git/" + path + filename;
+                @Cleanup @NonNull final ByteArrayInputStream inputStream = new ByteArrayInputStream(this.getData());
                 minioClient.putObject(bucketName, objectName, inputStream, TYPE);
                 memPack.put(ext, this.getData());
             }

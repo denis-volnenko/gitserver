@@ -18,6 +18,9 @@ import ru.volnenko.cloud.git.util.SettingUtil;
 public final class GitServer {
 
     @NonNull
+    private final CacheProvider cacheProvider = new CacheProvider();
+
+    @NonNull
     private final GitServlet gitServlet = new GitServlet();
 
     @NonNull
@@ -45,7 +48,7 @@ public final class GitServer {
     private final RepositoryDataServlet repositoryDataServlet = new RepositoryDataServlet(repositoryInitializer);
 
     @NonNull
-    private final MainResolver mainResolver = new MainResolver(minioClient, repositoryInitializer);
+    private final MainResolver mainResolver = new MainResolver(minioClient, repositoryInitializer, cacheProvider);
 
     @Getter
     @Setter

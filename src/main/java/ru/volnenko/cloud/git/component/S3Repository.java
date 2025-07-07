@@ -15,17 +15,22 @@ public final class S3Repository extends DfsRepository {
     @NonNull
     private final S3RefDatabase refDatabase = new S3RefDatabase(this);
 
+
     @NonNull
     private String gitwebDescription = "";
-
 
     public S3Repository(
             @NonNull final DfsRepositoryDescription desc,
             @NonNull final MinioClient minioClient,
-            @NonNull final RepositoryInitializer repositoryInitializer
+            @NonNull final RepositoryInitializer repositoryInitializer,
+            @NonNull final CacheProvider cacheProvider
     ) {
         this(new S3RepositoryBuilder().setRepositoryDescription(desc));
-        objectDatabase = new S3ObjectDatabase(this, options, minioClient, repositoryInitializer);
+        @NonNull final S3Repository repository = this;
+        objectDatabase = new S3ObjectDatabase(
+                repository, options, minioClient,
+                repositoryInitializer, cacheProvider
+        );
     }
 
     public S3Repository(@NonNull final DfsRepositoryBuilder builder) {

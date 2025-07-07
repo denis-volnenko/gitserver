@@ -22,12 +22,17 @@ public final class MainResolver implements RepositoryResolver<HttpServletRequest
     @NonNull
     private final RepositoryInitializer repositoryInitializer;
 
+    @NonNull
+    private final CacheProvider cacheProvider;
+
     public MainResolver(
             @NonNull final MinioClient minioClient,
-            @NonNull final RepositoryInitializer repositoryInitializer
+            @NonNull final RepositoryInitializer repositoryInitializer,
+            @NonNull final CacheProvider cacheProvider
     ) {
         this.minioClient = minioClient;
         this.repositoryInitializer = repositoryInitializer;
+        this.cacheProvider = cacheProvider;
     }
 
     @Override
@@ -37,7 +42,7 @@ public final class MainResolver implements RepositoryResolver<HttpServletRequest
         if (parts.length > 1) {
             @NonNull final String repositoryName = removePrefixIfExists(parts[0], "/");
             @NonNull final DfsRepositoryDescription description = new DfsRepositoryDescription(repositoryName);
-            @NonNull final S3Repository repository = new S3Repository(description,  minioClient, repositoryInitializer);
+            @NonNull final S3Repository repository = new S3Repository(description,  minioClient, repositoryInitializer, cacheProvider);
             repository.getConfig().setString("http", null, "receivepack", "true");
             return repository;
         }
