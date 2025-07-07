@@ -5,22 +5,22 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.Cleanup;
 import lombok.NonNull;
 import lombok.SneakyThrows;
-import ru.volnenko.cloud.git.util.SettingUtil;
+import ru.volnenko.cloud.git.component.RepositoryInitializer;
 import ru.volnenko.cloud.git.util.StringUtil;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 public final class RepositoryDataServlet extends HttpServlet {
 
     @NonNull
-    private final MinioClient minioClient;
+    private final RepositoryInitializer repositoryInitializer;
 
-    public RepositoryDataServlet(@NonNull final MinioClient minioClient) {
-        this.minioClient = minioClient;
+    public RepositoryDataServlet(
+            @NonNull final RepositoryInitializer repositoryInitializer
+    ) {
+        this.repositoryInitializer = repositoryInitializer;
     }
 
     @Override
@@ -29,23 +29,9 @@ public final class RepositoryDataServlet extends HttpServlet {
             @NonNull final HttpServletRequest req,
             @NonNull final HttpServletResponse resp
     ) throws ServletException, IOException {
-        final String repo = StringUtil.removePrefixIfExists(req.getRequestURI(), "/curl/repository/");
-        resp.getWriter().println("CREATED: " + repo);
-        {
-            @Cleanup @NonNull final ByteArrayInputStream inputStream = new ByteArrayInputStream("".getBytes());
-            minioClient.putObject(SettingUtil.getS3Bucket(), repo + "/description", inputStream, "text/plain");
-        }
-        {
-            @Cleanup @NonNull final ByteArrayInputStream inputStream = new ByteArrayInputStream(
-                    ("[core]\n" +
-                            "\trepositoryformatversion = 0\n" +
-                            "\tfilemode = true\n" +
-                            "\tbare = false\n" +
-                            "\tlogallrefupdates = true\n" +
-                            "\tignorecase = true\n" +
-                            "\tprecomposeunicode = true").getBytes());
-            minioClient.putObject(SettingUtil.getS3Bucket(), repo + "/config", inputStream, "text/plain");
-        }
+        final String repositoryName = StringUtil.removePrefixIfExists(req.getRequestURI(), "/curl/repository/");
+        resp.getWriter().println("CREATED: " + repositoryName);
+        repositoryInitializer.init(repositoryName);
         resp.getWriter().println("OK");
     }
 

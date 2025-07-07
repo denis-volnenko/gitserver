@@ -1,7 +1,6 @@
 package ru.volnenko.cloud.git.component;
 
 import io.minio.MinioClient;
-import jakarta.servlet.*;
 import lombok.*;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.FilterHolder;
@@ -23,6 +22,7 @@ public final class GitServer {
     @NonNull
     private final HealthzServlet healthzServlet = new HealthzServlet();
 
+
     @NonNull
     private final IndexFilter indexFilter = new IndexFilter();
 
@@ -36,10 +36,13 @@ public final class GitServer {
     private final MainResolver mainResolver = new MainResolver(minioClient);
 
     @NonNull
+    private final RepositoryInitializer repositoryInitializer = new RepositoryInitializer(minioClient);
+
+    @NonNull
     private final SecurityFilter securityFilter = new SecurityFilter();
 
     @NonNull
-    private final RepositoryDataServlet repositoryDataServlet = new RepositoryDataServlet(minioClient);
+    private final RepositoryDataServlet repositoryDataServlet = new RepositoryDataServlet(repositoryInitializer);
 
     @Getter
     @Setter
