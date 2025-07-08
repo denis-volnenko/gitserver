@@ -10,6 +10,7 @@ import org.eclipse.jgit.http.server.GitServlet;
 import ru.volnenko.cloud.git.builder.RepositorySettingBuilder;
 import ru.volnenko.cloud.git.servlet.filter.IndexFilter;
 import ru.volnenko.cloud.git.servlet.filter.SecurityFilter;
+import ru.volnenko.cloud.git.servlet.repository.RepositoryDescriptionServlet;
 import ru.volnenko.cloud.git.servlet.system.HealthzServlet;
 import ru.volnenko.cloud.git.servlet.repository.RepositoryDataServlet;
 import ru.volnenko.cloud.git.util.MinioUtil;
@@ -51,6 +52,8 @@ public final class GitServer {
     @NonNull
     private final MainResolver mainResolver = new MainResolver(minioClient, repositoryInitializer, cacheProvider);
 
+    private final RepositoryDescriptionServlet repositoryDescriptionServlet = new RepositoryDescriptionServlet(repositoryInitializer);
+
     @Getter
     @Setter
     private final int port = 8080;
@@ -65,7 +68,8 @@ public final class GitServer {
         server.setHandler(handler);
         handler.addServletWithMapping(new ServletHolder(gitServlet), "/*");
         handler.addServletWithMapping(new ServletHolder(healthzServlet), "/healthz/");
-        handler.addServletWithMapping(new ServletHolder(repositoryDataServlet), "/curl/repository/*");
+        handler.addServletWithMapping(new ServletHolder(repositoryDataServlet), "/curl/repository/data/*");
+        handler.addServletWithMapping(new ServletHolder(repositoryDescriptionServlet), "/curl/repository/description/*");
         if (SettingUtil.getSecurityEnabled()) handler.addFilterWithMapping(new FilterHolder(securityFilter), "/*", null);
         handler.addFilterWithMapping(new FilterHolder(indexFilter), "/", null);
         server.start();

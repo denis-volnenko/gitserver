@@ -56,4 +56,11 @@ public final class RepositoryInitializer {
         throw new NotImplementedException();
     }
 
+    public void setDescription(
+            @NonNull final DfsRepositoryDescription description,
+            @NonNull final String value
+    ) {
+        throw new NotImplementedException();
+    }
+
 }
