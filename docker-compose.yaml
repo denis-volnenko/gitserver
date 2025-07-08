@@ -7,13 +7,13 @@ services:
     ports:
       - "8080:8080"
     environment:
-      SECURITY_ENABLED: "true"
+      SECURITY_ENABLED: "false"
       SECURITY_USERNAME: "admin"
       SECURITY_PASSWORD: "admin"
-      S3_ENDPOINT: http://minio:9000
+      S3_ENDPOINT: http://minio:9000/
       S3_BUCKET: gitserver
-      S3_CLIENT_ID: minioadmin
-      S3_PASSWORD: minioadmin
+      S3_CLIENT_ID: minio
+      S3_SECRET_KEY: minio
     depends_on:
       - minio
 
@@ -25,8 +25,8 @@ services:
     volumes:
       - ./data:/data
     environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio
       MINIO_DEFAULT_BUCKETS: gitserver
     command: server /data --console-address ":9001"
     restart: unless-stopped
